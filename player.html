@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css" type="text/css"/>
+        <title>DOM Music Player</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <style type="text/css" >
+            
+        </style>
+    </head>
+    <body>
+
+        <script type="text/javascript" src="web/js/gMusicPlayer.js" ></script>
+        <script type="text/javascript" >
+            var player = new MusicPlayer();
+            var song1 = new Song("media/song/Flower - Jeon Su Yeon.m4a", "Flower", "Jeon Su Yeon");
+            var song2 = new Song("media/song/Kiss The Rain - Yiruma [M4A 32kbps].m4a", "Kiss The Rain", "Yiruma");
+            player.setPlayList([song1, song2]);
+            player.playSongAt(1);
+        </script>
+    </body>
+</html>
