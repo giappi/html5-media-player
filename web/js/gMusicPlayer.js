@@ -1,5 +1,7 @@
 "use strict";
 
+
+
 class Song
 {
     constructor(url, title, author, cover)
@@ -11,7 +13,7 @@ class Song
     }
 }
 
-
+/* global Canvas, Graphics */
 class MusicPlayer
 {
     constructor()
@@ -24,10 +26,33 @@ class MusicPlayer
         this.autoPlay = true;
         this.audio = document.createElement("audio");
         
+        this.width = 500;
+        this.height = 250;
+        
         this.onPlayed = function(e){};
         this.onTimeUpdated = function(e){};
         this.onPaused = function(e){};
         this.onEnded = function(e){};
+        
+        this.canvas = new Canvas(this.width, this.height);
+        this.canvas.style.border = "1px solid #CCCCCC";
+        
+        this.graphics = this.canvas.getGraphics();
+        
+        //this.paint.arguments = [this.graphics];
+        setInterval(this.paint.bind(this), 100, this.graphics);
+        setInterval(this.update.bind(this), 100);
+        
+        this.progressBar = new ProgressBar(400, 10);
+        
+        this.canvas.onmousedown = (function(e)
+        {
+            var x = this.getMousePoint(e).x;
+            var y = this.getMousePoint(e).y;
+            console.log(`OnMouseDown(${x}, ${y})`);
+            this.onMouseDown(x, y);
+        }).bind(this);
+        
     }
     
     /**
@@ -114,5 +139,86 @@ class MusicPlayer
         return minutes + ":" + seconds_m;
     }
     
+    placeOn(html_id)
+    {
+        var parent = document.getElementById(html_id);
+        if(parent)
+        {
+            parent.appendChild(this.canvas);
+        }
+    }
+    
+    update()
+    {
+        this.progressBar.percent = this.audio.currentTime/this.audio.duration;
+    }
+    
+    paint(g)
+    {
+        g.drawRect(0, 0, this.canvas.width, this.canvas.height);
+        this.progressBar.paint(g);
+    }
+    
+    
+
+    getMousePoint(e)
+    {
+        e = e || window.event;
+        var elementRect = this.canvas.getBoundingClientRect();
+        return { "x" : e.clientX - elementRect.left, "y" : e.clientY - elementRect.top };
+    }
+    
+    
+    
+    onMouseDown(x, y)
+    {
+        if(this.progressBar.isInside(x, y))
+        {
+            //update playing time
+            var percent = (x - this.progressBar.x)/this.progressBar.width;
+            //this.progressBar.onMouseDown(x - this.progressBar.x, y - this.progressBar.y);
+            var newCurrentTime = percent * this.audio.duration
+            this.audio.currentTime = newCurrentTime;
+        }
+        
+    }
+
+
+    
     
 }
+
+
+class ProgressBar
+{
+    constructor(width, height)
+    {
+        this.x = 0;
+        this.y = 0;
+        this.width = width;
+        this.height = height;
+        this.percent = 0;
+    }
+    
+    paint(g)
+    {
+        g.setColor("#FFFFFF");
+        g.fillRect(this.x, this.y, this.width, this.height);
+        g.setColor("#FF0000");
+        g.drawRect(this.x, this.y, this.width, this.height);
+        g.setColor("#FF0000");
+        g.fillRect(this.x, this.y, this.percent * this.width, this.height);
+    }
+    
+    isInside(x, y)
+    {
+        return x >= this.x && x < this.x + this.width && y >= this.y && y < this.y + this.height;
+    }
+    
+    
+    onMouseDown(x, y)
+    {
+        //this.percent = x/this.width;
+    }
+}
+

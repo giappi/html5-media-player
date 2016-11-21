@@ -9,7 +9,8 @@
         </style>
     </head>
     <body>
-
+        <div id="player_container" ></div>
+        <script type="text/javascript" src="web/js/jGraphics.js" ></script>
         <script type="text/javascript" src="web/js/gMusicPlayer.js" ></script>
         <script type="text/javascript" >
             var player = new MusicPlayer();
@@ -17,6 +18,9 @@
             var song2 = new Song("media/song/Kiss The Rain - Yiruma [M4A 32kbps].m4a", "Kiss The Rain", "Yiruma");
             player.setPlayList([song1, song2]);
             player.playSongAt(1);
+            
+            player.placeOn("player_container");
+
         </script>
     </body>
 </html>
